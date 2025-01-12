@@ -7,14 +7,29 @@ import type { Navigation } from '@toolpad/core/AppProvider';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ChangelogIcon from '@mui/icons-material/Article';
 import ShoppingCartIcon from '@mui/icons-material/CalendarMonth';
+import AccountIcon from '@mui/icons-material/AccountCircle';
 
 // Import your custom header
 import CustomHeader from './layouts/CustomHeader';  // Adjust path if necessary
 
 const NAVIGATION: Navigation = [
   {
+    kind: 'divider',
+  },
+  {
+    segment: 'account',
+    title: 'Account',
+    icon: <AccountIcon />,  // Account Icon
+  },
+  {
+    kind: 'divider',
+  },
+  {
     kind: 'header',
-    title: 'Available Functions for you',
+    title: 'Available Database Controls',
+  },
+  {
+    kind: 'divider',
   },
   {
     title: 'Changelogs',
@@ -25,6 +40,7 @@ const NAVIGATION: Navigation = [
     title: 'Seasons',
     icon: <ShoppingCartIcon />,  // Shopping Cart Icon
   },
+  
 ];
 
 const BRANDING = {
