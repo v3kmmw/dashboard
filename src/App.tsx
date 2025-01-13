@@ -36,7 +36,7 @@ const NAVIGATION: Navigation = [
     icon: <ChangelogIcon />,  // Changelog Icon
   },
   {
-    segment: 'orders',
+    segment: 'seasons',
     title: 'Seasons',
     icon: <ShoppingCartIcon />,  // Shopping Cart Icon
   },
