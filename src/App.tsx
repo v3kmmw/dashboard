@@ -41,12 +41,15 @@ const NAVIGATION: Navigation = [
   
 ];
 
-const BRANDING = {
-  title: 'Jailbreak Changelogs Dashboard',  // Just use the string here
-  color: 'var(--mui-palette-text-primary)',  // Use CSS variables here
+const BRANDING: any = {
+  title: (
+    <span style={{ color: 'var(--mui-palette-text-secondary)' }}>
+      JBC Dashboard
+    </span>
+  ),
   logo: (
     <img
-      src="/logo3.png"
+      src="https://cdn.jakobiis.xyz/nze0f6kli"
       alt="Logo"
       style={{
         width: '40px',
