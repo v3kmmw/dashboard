@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
-import Layout from './layouts/dashboard';
+import Layout from './layouts/dashboard.tsx';
 import DashboardPage from './pages';
-import SeasonsPage from './pages/seasons';
+import SeasonsPage from './pages/seasons.tsx';
 
 const router = createBrowserRouter([
   {
