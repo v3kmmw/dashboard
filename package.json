@@ -16,9 +16,11 @@
     "lodash.debounce": "^4.0.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router": "^7"
+    "react-router": "^7",
+    "rollup": "^4.30.1"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
