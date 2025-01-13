@@ -27,6 +27,6 @@
     "@types/rollup": "^0.51.4",
     "@vitejs/plugin-react": "^4.3.2",
     "typescript": "^5",
-    "vite": "^5.4.8"
+    "vite": "^6.0.7"
   }
 }
