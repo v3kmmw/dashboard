@@ -10,8 +10,6 @@ import ShoppingCartIcon from '@mui/icons-material/CalendarMonth';
 import AccountIcon from '@mui/icons-material/AccountCircle';
 
 // Import your custom header
-import CustomHeader from './layouts/CustomHeader';  // Adjust path if necessary
-
 const NAVIGATION: Navigation = [
   {
     kind: 'divider',
