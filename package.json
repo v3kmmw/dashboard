@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit false",  
-    "start": "node dist/index.js"  
+    "start": "webpack serve --config webpack.config.js",
+    "build": "webpack --config webpack.config.js"
   },
+
   "dependencies": {
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -23,6 +24,13 @@
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.0",
-    "typescript": "^5"
+    "copyfiles": "^2.4.1",
+    "html-webpack-plugin": "^5.6.3",
+    "serve": "^14.2.4",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.7.3",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
   }
 }
