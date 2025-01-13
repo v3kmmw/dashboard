@@ -42,23 +42,21 @@ const NAVIGATION: Navigation = [
 ];
 
 const BRANDING = {
-  title: (
-    <span style={{ color: 'var(--mui-palette-text-secondary)' }}>
-      Jailbreak Changelogs Dashboard
-    </span>
-  ),
+  title: 'Jailbreak Changelogs Dashboard',  // Just use the string here
+  color: 'var(--mui-palette-text-primary)',  // Use CSS variables here
   logo: (
     <img
       src="/logo3.png"
       alt="Logo"
       style={{
-        width: '40px',        // Set the width of the logo
-        height: '40px',       // Set the height of the logo (same as width to maintain circular shape)
-        borderRadius: '50%',  // This makes the image circular
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
       }}
     />
   ),
 };
+
 
 export default function App() {
   return (

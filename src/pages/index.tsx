@@ -204,7 +204,8 @@ export default function DashboardPage() {
 
     // Add the new changelog to the list
     const id = changelogs.length + 1;
-    changelogToEdit.id = id;
+
+    changelogToEdit.id = id.toString();
     console.log('Adding changelog:', changelogToEdit);
 
     setChangelogs([...changelogs, changelogToEdit]);
