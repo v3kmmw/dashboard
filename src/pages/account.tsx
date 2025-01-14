@@ -44,6 +44,23 @@ export default function AccountPage() {
     window.location.href = '/login';
   };
 
+  const refreshPermissions = () => {
+    fetch(`https://api3.jailbreakchangelogs.xyz/permissions/get?token=${token}`)
+      .then(response => response.json())
+      .then(data => {
+        try {
+          const correctedPermissionsJson = data.permissions.replace(/'/g, '"').replace(/False/g, 'false').replace(/True/g, 'true');
+          const parsedPermissions = JSON.parse(correctedPermissionsJson);
+          const availablePermissions = Object.keys(parsedPermissions).filter(permission => parsedPermissions[permission]);
+          sessionStorage.setItem('permissions', JSON.stringify(availablePermissions));
+          setPermissions(availablePermissions);
+        } catch (error) {
+          console.error('Error parsing permissions:', error);
+        }
+      })
+      .catch(error => console.error('Error fetching permissions:', error));
+  };
+
   return (
     <Container>
       <Box 
@@ -68,23 +85,40 @@ export default function AccountPage() {
           width="100%"
         >
           <Typography variant="h6" gutterBottom>Available Permissions</Typography>
-          <Grid container spacing={2} justifyContent={permissions.length === 1 ? 'center' : 'flex-start'}>
-            {permissions.map((permission, index) => (
-              <Grid item xs={permissions.length === 1 ? 12 : 6} key={index} textAlign={permissions.length === 1 ? 'center' : 'left'}>
-                <Typography variant="body1">
-                  {permission}
-                </Typography>
-              </Grid>
-            ))}
-          </Grid>
+          {permissions.length === 1 ? (
+            <Box display="flex" justifyContent="center">
+              <Typography variant="body1">
+                {permissions[0]}
+              </Typography>
+            </Box>
+          ) : (
+            <Grid container spacing={2} justifyContent="center" alignItems="center">
+              {permissions.map((permission, index) => (
+                <Grid item xs={6} key={index}>
+                  <Typography variant="body1" textAlign="center">
+                    {permission}
+                  </Typography>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Box>
-        <Button 
-          variant="outlined" 
-          color="primary"
-          onClick={handleLogout}
-        >
-          Log Out
-        </Button>
+        <Box display="flex" justifyContent="center" gap={2} mt={2}>
+          <Button 
+            variant="outlined" 
+            color="primary"
+            onClick={refreshPermissions}
+          >
+            Refresh Permissions
+          </Button>
+          <Button 
+            variant="outlined" 
+            color="primary"
+            onClick={handleLogout}
+          >
+            Log Out
+          </Button>
+        </Box>
       </Box>
     </Container>
   );
