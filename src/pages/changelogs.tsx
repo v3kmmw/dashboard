@@ -16,6 +16,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContentText from '@mui/material/DialogContentText';
 import TextField from '@mui/material/TextField';
 import debounce from 'lodash.debounce';
+import TablePagination from '@mui/material/TablePagination';
 // Loading Bar Component
 const LoadingBar = ({ mountKey }) => (
   <Box
@@ -95,6 +96,9 @@ export default function ChangelogsPage() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedChangelogForDelete, setSelectedChangelogForDelete] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(50); // Adjust rows per page as needed
+
   const auth = "Rd749u5TwffkhRoySXB7E6fg2phNkNhobHnkGRxvYsQMGS7ZJf";
   const [changelogToEdit, setChangelogToEdit] = useState({
     id: '',
@@ -301,180 +305,205 @@ const handleSaveEdit = () => {
         image_url: ''
     });
 };
+    const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    };
 
+    const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    };
 
-  return (
-    <Paper>
-      <Box sx={{ paddingLeft: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+return (
+  <Paper>
+    <Box sx={{ paddingLeft: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+      <TextField
+        variant="outlined"
+        label="Search by ID"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        margin="normal"
+      />
+      <Button 
+       variant="contained"
+        color="primary"
+        onClick={() => setOpenAddDialog(true)}
+      >
+      Add Changelog
+      </Button>
+    </Box>
+    <TableContainer>
+    <TablePagination
+      rowsPerPageOptions={[25, 50, 100]} // Adjust options as needed
+      component="div"
+      count={filteredChangelogs.length}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onPageChange={handleChangePage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
+    />
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell>Title</TableCell>
+            <TableCell>Sections</TableCell>
+            <TableCell>Image</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filteredChangelogs.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5}>
+                <Typography variant="h6" align="center">
+                  This changelog doesn't exist.
+                </Typography>
+              </TableCell>
+            </TableRow>
+          ) : (
+            filteredChangelogs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((log, index) => (
+              <TableRow key={index}>
+                <TableCell>{log.id}</TableCell>
+                <TableCell>{log.title}</TableCell>
+                <TableCell>{log.sections}</TableCell>
+                <TableCell>{log.image_url}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => handleEdit(log)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteConfirmation(log)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <TablePagination
+      rowsPerPageOptions={[5, 10, 25]} // Adjust options as needed
+      component="div"
+      count={filteredChangelogs.length}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onPageChange={handleChangePage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
+    />
+
+    {/* Confirm Delete Dialog */}
+    <Dialog
+      open={openConfirmDeleteDialog}
+      onClose={handleCloseConfirmDeleteDialog}
+    >
+      <DialogTitle>Confirm Deletion</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to delete this changelog? This action cannot be undone.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseConfirmDeleteDialog}>Cancel</Button>
+        <Button onClick={handleConfirmDelete} color="error">Delete</Button>
+      </DialogActions>
+    </Dialog>
+
+    {/* Add Changelog Dialog */}
+    <Dialog
+      open={openAddDialog}
+      onClose={handleCloseAddDialog}
+      PaperProps={{
+        style: {
+          width: 'auto',
+          maxWidth: 'none',
+          minWidth: '50%'
+        }
+      }}
+    >
+      <DialogTitle>Add Changelog</DialogTitle>
+      <DialogContent>
         <TextField
-          variant="outlined"
-          label="Search by ID"
-          value={searchTerm}
-          onChange={handleSearchChange}
+          label="Title"
+          value={changelogToEdit.title}
+          onChange={(e) => setChangelogToEdit({ ...changelogToEdit, title: e.target.value })}
+          fullWidth
           margin="normal"
         />
-        <Button 
-         variant="contained"
-          color="primary"
-          onClick={() => setOpenAddDialog(true)}
-        >
-        Add Changelog
-        </Button>
-      </Box>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Sections</TableCell>
-              <TableCell>Image</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-  {filteredChangelogs.length === 0 ? (
-    <TableRow>
-      <TableCell colSpan={5}>
-        <Typography variant="h6" align="center">
-          This changelog doesnt exist.
-        </Typography>
-      </TableCell>
-    </TableRow>
-  ) : (
-    filteredChangelogs.map((log, index) => (
-      <TableRow key={index}>
-        <TableCell>{log.id}</TableCell>
-        <TableCell>{log.title}</TableCell>
-        <TableCell>{log.sections}</TableCell>
-        <TableCell>{log.image_url}</TableCell>
-        <TableCell>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleEdit(log)}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleDeleteConfirmation(log)}
-            >
-              Delete
-            </Button>
-          </Box>
-        </TableCell>
-      </TableRow>
-    ))
-  )}
-</TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Confirm Delete Dialog */}
-      <Dialog
-        open={openConfirmDeleteDialog}
-        onClose={handleCloseConfirmDeleteDialog}
-      >
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this changelog? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseConfirmDeleteDialog}>Cancel</Button>
-          <Button onClick={handleConfirmDelete} color="error">Delete</Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* Add Changelog Dialog */}
-      <Dialog
-        open={openAddDialog}
-        onClose={handleCloseAddDialog}
-        PaperProps={{
-          style: {
-            width: 'auto',
-            maxWidth: 'none',
-            minWidth: '50%'
-          }
-        }}
-      >
-        <DialogTitle>Add Changelog</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Title"
-            value={changelogToEdit.title}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, title: e.target.value })}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Sections"
-            value={changelogToEdit.sections}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, sections: e.target.value })}
-            fullWidth
-            margin="normal"
-            multiline
-          />
-          <TextField
-            label="Image URL"
-            value={changelogToEdit.image_url}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, image_url: e.target.value })}
-            fullWidth
-            margin="normal"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseAddDialog}>Cancel</Button>
-          <Button onClick={handleSaveAdd} color="primary">Save</Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* Edit Changelog Dialog */}
-      <Dialog
-        open={openEditDialog}
-        onClose={handleCloseEditDialog}
-        PaperProps={{
-          style: {
-            width: 'auto',
-            maxWidth: 'none',
-            minWidth: '50%'
-          }
-        }}
-      >
-        <DialogTitle>Edit Changelog</DialogTitle>
-        <DialogContent>3
-          <TextField
-            label="Title"
-            value={changelogToEdit.title}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, title: e.target.value })}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Sections"
-            value={changelogToEdit.sections}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, sections: e.target.value })}
-            fullWidth
-            margin="normal"
-            multiline
-          />
-          <TextField
-            label="Image URL"
-            value={changelogToEdit.image_url}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, image_url: e.target.value })}
-            fullWidth
-            margin="normal"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEditDialog}>Cancel</Button>
-          <Button onClick={handleSaveEdit} color="primary">Save</Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
-  );
+        <TextField
+          label="Sections"
+          value={changelogToEdit.sections}
+          onChange={(e) => setChangelogToEdit({ ...changelogToEdit, sections: e.target.value })}
+          fullWidth
+          margin="normal"
+          multiline
+        />
+        <TextField
+          label="Image URL"
+          value={changelogToEdit.image_url}
+          onChange={(e) => setChangelogToEdit({ ...changelogToEdit, image_url: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseAddDialog}>Cancel</Button>
+        <Button onClick={handleSaveAdd} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+    
+    {/* Edit Changelog Dialog */}
+    <Dialog
+      open={openEditDialog}
+      onClose={handleCloseEditDialog}
+      PaperProps={{
+        style: {
+          width: 'auto',
+          maxWidth: 'none',
+          minWidth: '50%'
+        }
+      }}
+    >
+      <DialogTitle>Edit Changelog</DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Title"
+          value={changelogToEdit.title}
+          onChange={(e) => setChangelogToEdit({ ...changelogToEdit, title: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Sections"
+          value={changelogToEdit.sections}
+          onChange={(e) => setChangelogToEdit({ ...changelogToEdit, sections: e.target.value })}
+          fullWidth
+          margin="normal"
+          multiline
+        />
+        <TextField
+          label="Image URL"
+          value={changelogToEdit.image_url}
+          onChange={(e) => setChangelogToEdit({ ...changelogToEdit, image_url: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseEditDialog}>Cancel</Button>
+        <Button onClick={handleSaveEdit} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+  </Paper>
+);
 }

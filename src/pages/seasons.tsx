@@ -15,6 +15,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContentText from '@mui/material/DialogContentText';
 import TextField from '@mui/material/TextField';
+import TablePagination from '@mui/material/TablePagination';
 import debounce from 'lodash.debounce';
 // Loading Bar Component
 const LoadingBar = ({ mountKey }) => (
@@ -96,6 +97,8 @@ export default function SeasonsPage() {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedChangelogForDelete, setSelectedChangelogForDelete] = useState(null);
   const auth = "Rd749u5TwffkhRoySXB7E6fg2phNkNhobHnkGRxvYsQMGS7ZJf";
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(50); // Adjust rows per page as needed
   const [changelogToEdit, setChangelogToEdit] = useState({
     season: '',
     title: '',
@@ -309,6 +312,14 @@ const handleSaveEdit = () => {
     });
 };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    };
 
   return (
     <Paper>
@@ -329,6 +340,15 @@ const handleSaveEdit = () => {
         </Button>
       </Box>
       <TableContainer>
+      <TablePagination
+          rowsPerPageOptions={[25, 50, 100]} // Adjust options as needed
+          component="div"
+          count={filteredChangelogs.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
         <Table>
           <TableHead>
             <TableRow>
@@ -381,6 +401,15 @@ const handleSaveEdit = () => {
 </TableBody>
 
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[25, 50, 100]} // Adjust options as needed
+          component="div"
+          count={filteredChangelogs.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       {/* Confirm Delete Dialog */}

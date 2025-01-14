@@ -25,6 +25,18 @@ export default function LoginPage() {
                         window.location.href = '/'
                     }
                 })
+                fetch(`https://api3.jailbreakchangelogs.xyz/permissions/get?token=${sessionStorage.getItem('token')}`)
+                .then(response => response.json())
+                .then(data => {
+                    try {
+                        const correctedPermissionsJson = data.permissions.replace(/'/g, '"').replace(/False/g, 'false').replace(/True/g, 'true');
+                        const parsedPermissions = JSON.parse(correctedPermissionsJson);
+                        const availablePermissions = Object.keys(parsedPermissions).filter(permission => parsedPermissions[permission]);
+                        sessionStorage.setItem('permissions', JSON.stringify(availablePermissions));
+                    } catch (error) {
+                        console.error('Error parsing permissions:', error);
+                    }
+                })
             }, 300);
             return () => clearTimeout(debounced)
         }
