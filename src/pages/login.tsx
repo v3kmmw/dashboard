@@ -22,6 +22,7 @@ export default function LoginPage() {
                         const token = data.token;
                         sessionStorage.setItem('token', token);
                         sessionStorage.setItem('user', JSON.stringify(data));
+                        window.location.href = '/'
                     }
                 })
             }, 300);
