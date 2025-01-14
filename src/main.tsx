@@ -34,7 +34,7 @@ const router = createBrowserRouter([
             Component: AccountPage,
           },
           {
-            path: 'login',
+            path: 'authenticate',
             Component: LoginPage,
           }
         ],

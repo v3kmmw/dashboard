@@ -85,7 +85,7 @@ const LoadingScreen = () => {
 export default function SeasonsPage() {
   const token = sessionStorage.getItem('token');
   if (!token) {
-    window.location.href = '/login'
+    window.location.href = '/authenticate'
   }
   const [seasons, setSeasons] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

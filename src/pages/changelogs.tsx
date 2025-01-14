@@ -85,7 +85,7 @@ const LoadingScreen = () => {
 export default function ChangelogsPage() {
   const token = sessionStorage.getItem('token');
   if (!token) {
-    window.location.href = '/login'
+    window.location.href = '/authenticate'
   }
   const [changelogs, setChangelogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
