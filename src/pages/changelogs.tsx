@@ -75,19 +75,19 @@ const LoadingScreen = () => {
       gap: 2,
     }}>
       <Typography variant="h6" color="text.secondary">
-        Loading seasons...
+        Loading changelogs...
       </Typography>
       <LoadingBar mountKey={mountKey} />
     </Box>
   );
 };
 
-export default function SeasonsPage() {
+export default function ChangelogsPage() {
   const token = sessionStorage.getItem('token');
   if (!token) {
     window.location.href = '/login'
   }
-  const [seasons, setSeasons] = useState([]);
+  const [changelogs, setChangelogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -97,11 +97,10 @@ export default function SeasonsPage() {
   const [selectedChangelogForDelete, setSelectedChangelogForDelete] = useState(null);
   const auth = "Rd749u5TwffkhRoySXB7E6fg2phNkNhobHnkGRxvYsQMGS7ZJf";
   const [changelogToEdit, setChangelogToEdit] = useState({
-    season: '',
+    id: '',
     title: '',
-    description: '',
-    start_date: '',
-    end_date: ''
+    sections: '',
+    image_url: ''
   });
 
   const debouncedSetSearchTerm = useCallback(
@@ -120,24 +119,24 @@ export default function SeasonsPage() {
 
   // Filter changelogs based on the debounced search term
   const filteredChangelogs = useMemo(() => {
-    return seasons.filter((season) =>
-      season.season.toString().includes(debouncedSearchTerm)  // Filter without debounce
+    return changelogs.filter((log) =>
+      log.id.toString().includes(debouncedSearchTerm)  // Filter without debounce
     );
-  }, [seasons, debouncedSearchTerm]);  // Recalculate only when changelogs or searchTerm change
+  }, [changelogs, debouncedSearchTerm]);  // Recalculate only when changelogs or searchTerm change
 
 
   useEffect(() => {
     setIsLoading(true);
-    if (sessionStorage.getItem('seasons')) {
-      setSeasons(JSON.parse(sessionStorage.getItem('seasons')));
+    if (sessionStorage.getItem('changelogs')) {
+      setChangelogs(JSON.parse(sessionStorage.getItem('changelogs')));
       setTimeout(() => setIsLoading(false), 500); // Simulate loading
     }
 
-    fetch('https://api3.jailbreakchangelogs.xyz/seasons/list?nocache=true')
+    fetch('https://api3.jailbreakchangelogs.xyz/changelogs/list?nocache=true')
       .then(response => response.json())
       .then(data => {
-        setSeasons(data);
-        sessionStorage.setItem('seasons', JSON.stringify(data)); // Cache data
+        setChangelogs(data);
+        sessionStorage.setItem('changelogs', JSON.stringify(data)); // Cache data
         setTimeout(() => setIsLoading(false), 500); // Simulate loading
       })
       .catch(error => {
@@ -161,15 +160,15 @@ export default function SeasonsPage() {
   };
 
   const handleConfirmDelete = () => {
-    setSeasons(seasons.filter(log => log.id !== selectedChangelogForDelete.id));
-    fetch(`https://api3.jailbreakchangelogs.xyz/seasons/delete?auth=${auth}&season=` + selectedChangelogForDelete.season, {
+    setChangelogs(changelogs.filter(log => log.id !== selectedChangelogForDelete.id));
+    fetch(`https://api3.jailbreakchangelogs.xyz/changelogs/delete?auth=${auth}&id=` + selectedChangelogForDelete.id, {
       method: 'DELETE'
     })
     .then(response => response.json())
     .then(response => {
-      console.log('Deleted season:', response);
+      console.log('Deleted changelog:', response);
     })
-    sessionStorage.removeItem('seasons')
+    sessionStorage.removeItem('changelogs')
 
     setOpenConfirmDeleteDialog(false);
     setSelectedChangelogForDelete(null);
@@ -183,50 +182,47 @@ export default function SeasonsPage() {
   const handleCloseAddDialog = () => {
     setOpenAddDialog(false);
     setChangelogToEdit({
-      season: '',
+      id: '',
       title: '',
-      description: '',
-      start_date: '',
-      end_date: ''
+      sections: '',
+      image_url: ''
     }); // Reset add dialog fields
   };
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
     setChangelogToEdit({
-      season: '',
+      id: '',
       title: '',
-      description: '',
-      start_date: '',
-      end_date: ''
+      sections: '',
+      image_url: ''
     }); // Reset the changelog to edit
   };
 
   const handleSaveAdd = () => {
     // Ensure all fields are filled before adding
-    if (!changelogToEdit.title || !changelogToEdit.description) {
+    if (!changelogToEdit.title || !changelogToEdit.sections) {
         alert("Please fill out all fields");
         return;
     }
 
     // Add the new changelog to the list
-    const id = seasons.length + 1;
+    const id = changelogs.length + 1;
 
-    changelogToEdit.season = id.toString();
+    changelogToEdit.id = id.toString();
     console.log('Adding changelog:', changelogToEdit);
 
-    setSeasons([...seasons, changelogToEdit]);
+    setChangelogs([...changelogs, changelogToEdit]);
 
     const body = {
-      season: id,
+      id: id,
       title: changelogToEdit.title,
-      description: changelogToEdit.description,
-      start_date: changelogToEdit.start_date,
-      end_date: changelogToEdit.end_date
+      sections: changelogToEdit.sections,
+      image_url: changelogToEdit.image_url
     };
 
     // Make sure to set the correct headers for the request
-    fetch(`https://api3.jailbreakchangelogs.xyz/seasons/add?auth=${auth}`, {
+    fetch(`https://api3.jailbreakchangelogs.xyz/changelogs/add?auth=${auth}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',  // Tell the server we're sending JSON
@@ -235,21 +231,20 @@ export default function SeasonsPage() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Added season:', data);
+      console.log('Added changelog:', data);
     })
     .catch(error => {
-      console.error('Error adding season:', error);
+      console.error('Error adding changelog:', error);
     });
-    sessionStorage.removeItem('seasons')
+    sessionStorage.removeItem('changelogs')
 
     // Close the dialog and reset the form
     setOpenAddDialog(false);
     setChangelogToEdit({
-        season: '',
+        id: '',
         title: '',
-        description: '',
-        start_date: '',
-        end_date: ''
+        sections: '',
+        image_url: ''
     });
 };
 
@@ -258,7 +253,7 @@ export default function SeasonsPage() {
 
 const handleSaveEdit = () => {
     // Ensure all fields are filled before saving
-    if (!changelogToEdit.season || !changelogToEdit.title || !changelogToEdit.description) {
+    if (!changelogToEdit.id || !changelogToEdit.title || !changelogToEdit.sections) {
         alert("Please fill out all fields");
         return;
     }
@@ -267,13 +262,12 @@ const handleSaveEdit = () => {
     console.log('Saving changes to changelog:', changelogToEdit);
     const body = {
       title: changelogToEdit.title,
-      description: changelogToEdit.description,
-      start_date: changelogToEdit.start_date,
-      end_date: changelogToEdit.end_date
+      sections: changelogToEdit.sections,
+      image_url: changelogToEdit.image_url
     };
 
     // Make sure to set the correct headers for the request
-    fetch(`https://api3.jailbreakchangelogs.xyz/seasons/update?auth=${auth}&season=` + changelogToEdit.season, {
+    fetch(`https://api3.jailbreakchangelogs.xyz/changelogs/update?auth=${auth}&id=` + changelogToEdit.id, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',  // Tell the server we're sending JSON
@@ -282,30 +276,29 @@ const handleSaveEdit = () => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Updated season:', data);
+      console.log('Updated changelog:', data);
     })
     .catch(error => {
-      console.error('Error updating season:', error);
+      console.error('Error updating changelog:', error);
     });
 
     // Update the changelogs array in the state
-    const updatedChangelogs = seasons.map(log => 
-      log.season === changelogToEdit.season? changelogToEdit : log
+    const updatedChangelogs = changelogs.map(log => 
+      log.id === changelogToEdit.id? changelogToEdit : log
     );
-    setSeasons(updatedChangelogs);
+    setChangelogs(updatedChangelogs);
 
-    sessionStorage.removeItem('seasons') // Update cache
+    sessionStorage.removeItem('changelogs') // Update cache
 
     // Close the dialog
     setOpenEditDialog(false);
 
     // Reset form state after saving
     setChangelogToEdit({
-        season: '',
+        id: '',
         title: '',
-        description: '',
-        start_date: '',
-        end_date: ''
+        sections: '',
+        image_url: ''
     });
 };
 
@@ -315,7 +308,7 @@ const handleSaveEdit = () => {
       <Box sx={{ paddingLeft: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField
           variant="outlined"
-          label="Search by season"
+          label="Search by ID"
           value={searchTerm}
           onChange={handleSearchChange}
           margin="normal"
@@ -325,38 +318,36 @@ const handleSaveEdit = () => {
           color="primary"
           onClick={() => setOpenAddDialog(true)}
         >
-        Add Season
+        Add Changelog
         </Button>
       </Box>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Season</TableCell>
+              <TableCell>ID</TableCell>
               <TableCell>Title</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Start Date</TableCell>
-              <TableCell>End Date</TableCell>
+              <TableCell>Sections</TableCell>
+              <TableCell>Image</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
   {filteredChangelogs.length === 0 ? (
     <TableRow>
-      <TableCell colSpan={6}>
+      <TableCell colSpan={5}>
         <Typography variant="h6" align="center">
-          This season doesnt exist.
+          This changelog doesnt exist.
         </Typography>
       </TableCell>
     </TableRow>
   ) : (
     filteredChangelogs.map((log, index) => (
       <TableRow key={index}>
-        <TableCell>{log.season}</TableCell>
+        <TableCell>{log.id}</TableCell>
         <TableCell>{log.title}</TableCell>
-        <TableCell>{log.description}</TableCell>
-        <TableCell>{log.start_date}</TableCell>
-        <TableCell>{log.end_date}</TableCell>
+        <TableCell>{log.sections}</TableCell>
+        <TableCell>{log.image_url}</TableCell>
         <TableCell>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
@@ -379,7 +370,6 @@ const handleSaveEdit = () => {
     ))
   )}
 </TableBody>
-
         </Table>
       </TableContainer>
 
@@ -412,7 +402,7 @@ const handleSaveEdit = () => {
           }
         }}
       >
-        <DialogTitle>Add Season</DialogTitle>
+        <DialogTitle>Add Changelog</DialogTitle>
         <DialogContent>
           <TextField
             label="Title"
@@ -422,24 +412,17 @@ const handleSaveEdit = () => {
             margin="normal"
           />
           <TextField
-            label="Description"
-            value={changelogToEdit.description}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, description: e.target.value })}
+            label="Sections"
+            value={changelogToEdit.sections}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, sections: e.target.value })}
             fullWidth
             margin="normal"
             multiline
           />
           <TextField
-            label="Start Date"
-            value={changelogToEdit.start_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, start_date: e.target.value })}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="End Date"
-            value={changelogToEdit.end_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, end_date: e.target.value })}
+            label="Image URL"
+            value={changelogToEdit.image_url}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, image_url: e.target.value })}
             fullWidth
             margin="normal"
           />
@@ -462,7 +445,7 @@ const handleSaveEdit = () => {
           }
         }}
       >
-        <DialogTitle>Edit Season</DialogTitle>
+        <DialogTitle>Edit Changelog</DialogTitle>
         <DialogContent>3
           <TextField
             label="Title"
@@ -473,23 +456,16 @@ const handleSaveEdit = () => {
           />
           <TextField
             label="Sections"
-            value={changelogToEdit.description}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, description: e.target.value })}
+            value={changelogToEdit.sections}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, sections: e.target.value })}
             fullWidth
             margin="normal"
             multiline
           />
           <TextField
-            label="Start Date"
-            value={changelogToEdit.start_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, start_date: e.target.value })}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="End Date"
-            value={changelogToEdit.end_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, end_date: e.target.value })}
+            label="Image URL"
+            value={changelogToEdit.image_url}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, image_url: e.target.value })}
             fullWidth
             margin="normal"
           />

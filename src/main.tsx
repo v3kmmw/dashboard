@@ -3,8 +3,11 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
 import Layout from './layouts/dashboard';
-import DashboardPage from './pages';
+import ChangelogsPage from './pages/changelogs';
+import DashboardPage from './pages'
 import SeasonsPage from './pages/seasons';
+import AccountPage from './pages/account';
+import LoginPage from './pages/login';
 
 const router = createBrowserRouter([
   {
@@ -19,9 +22,21 @@ const router = createBrowserRouter([
             Component: DashboardPage,
           },
           {
+            path: 'changelogs',
+            Component: ChangelogsPage
+          },
+          {
             path: 'seasons',
             Component: SeasonsPage,
           },
+          {
+            path: 'account',
+            Component: AccountPage,
+          },
+          {
+            path: 'login',
+            Component: LoginPage,
+          }
         ],
       },
     ],
