@@ -46,9 +46,21 @@ if (user) {
       kind: 'divider',
     },
   ];
-    const permissions = JSON.parse(sessionStorage.getItem('permissions'));
+    let permissions = JSON.parse(sessionStorage.getItem('permissions'));
     if (!permissions && window.location.pathname !== '/login') {
-      window.location.href = '/login';
+      fetch(`https://api3.jailbreakchangelogs.xyz/permissions/get?token=${sessionStorage.getItem('token')}`)
+      .then(response => response.json())
+      .then(data => {
+        try {
+          const correctedPermissionsJson = data.permissions.replace(/'/g, '"').replace(/False/g, 'false').replace(/True/g, 'true');
+          const parsedPermissions = JSON.parse(correctedPermissionsJson);
+          const availablePermissions = Object.keys(parsedPermissions).filter(permission => parsedPermissions[permission]);
+          sessionStorage.setItem('permissions', JSON.stringify(availablePermissions));
+          permissions = availablePermissions
+        } catch (error) {
+          console.error('Error parsing permissions:', error);
+        }
+      })
     }
     if (permissions) {
     if (permissions.includes('changelogs')) {
