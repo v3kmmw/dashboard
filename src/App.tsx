@@ -10,13 +10,6 @@ import ChangelogIcon from '@mui/icons-material/Article';
 import ShoppingCartIcon from '@mui/icons-material/CalendarMonth';
 import AccountIcon from '@mui/icons-material/AccountCircle';
 
-const token = sessionStorage.getItem('token');
-if (!token) {
-  if (window.location.pathname !== '/login') {
-    window.location.href = '/login';
-  }
-}
-
 // Import your custom header
 const NAVIGATION: Navigation = [
   {
