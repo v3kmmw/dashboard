@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 export default function AccountPage() {
     const token = sessionStorage.getItem('token');
     if (!token) {
-      window.location.href = '/authenticate'
+      window.location.href = '/login'
     }
   return <Typography>Welcome to the Toolpad orders!</Typography>;
 }

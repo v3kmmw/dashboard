@@ -21,11 +21,6 @@ const NAVIGATION: Navigation = [
     icon: <AccountIcon />,  // Account Icon
   },
   {
-    segment: 'authenticate',
-    title: 'Login',
-    icon: <AccountIcon />,  // Account Icon
-  },
-  {
     title: 'Home',
     icon: <HomeIcon />,  // Account Icon
   },
