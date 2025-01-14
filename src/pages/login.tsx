@@ -32,7 +32,7 @@ export default function LoginPage() {
 
 
     const handleLogin = () => {
-       const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin&scope=identify`;
+       const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Fdashboard.jailbreakchangelogs.xyz%2Flogin&scope=identify`;
        window.location.href = discordAuthUrl;
   };
 
