@@ -8,6 +8,7 @@ import DashboardPage from './pages'
 import SeasonsPage from './pages/seasons';
 import AccountPage from './pages/account';
 import LoginPage from './pages/login';
+import NotFoundPage from './pages/notfound';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
             path: 'login',
             Component: LoginPage,
             
+          },
+          {
+            path: '*',
+            Component: NotFoundPage
           }
         ],
       },
