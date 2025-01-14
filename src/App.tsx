@@ -47,7 +47,7 @@ if (user) {
     },
   ];
     let permissions = JSON.parse(sessionStorage.getItem('permissions'));
-    if (!permissions && window.location.pathname !== '/login') {
+    if (!permissions) {
       fetch(`https://api3.jailbreakchangelogs.xyz/permissions/get?token=${sessionStorage.getItem('token')}`)
       .then(response => response.json())
       .then(data => {
