@@ -1,6 +1,72 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Container, Grid, Card, CardContent, CardActions, Button, Select, MenuItem } from '@mui/material';
 
+
+
+const LoadingBar = ({ mountKey }) => (
+  <Box
+    key={mountKey}
+    className="loading-bar-container"
+    sx={{
+      width: '80%',
+      height: '8px',
+      borderRadius: '4px',
+      overflow: 'hidden',
+      background: '#f0f0f0',
+      position: 'relative',
+    }}
+  >
+    <Box
+      className="loading-bar"
+      key={mountKey}
+      sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        height: '100%',
+        width: '40%',
+        background: '#748D92',
+        borderRadius: '4px',
+        animation: 'loading 2s infinite linear',
+        '@keyframes loading': {
+          '0%': {
+            transform: 'translateX(-100%)',
+          },
+          '100%': {
+            transform: 'translateX(250%)',
+          },
+        }
+      }}
+    />
+  </Box>
+);
+
+// Loading Screen Component
+const LoadingScreen = () => {
+  const [mountKey, setMountKey] = useState(0);
+
+  useEffect(() => {
+    // Force new mount key on every mount
+    setMountKey(Date.now());
+  }, []);
+
+  return (
+    <Box sx={{
+      width: '100%',
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 2,
+    }}>
+      <Typography variant="h6" color="text.secondary">
+        Loading bot settings...
+      </Typography>
+      <LoadingBar mountKey={mountKey} />
+    </Box>
+  );
+};
 export default function BotSettings() {
     const [guilds, setGuilds] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -52,13 +118,7 @@ export default function BotSettings() {
     }, []);
 
     if (loading) {
-        return (
-            <Container>
-                <Typography variant="h5" component="div">
-                    Loading...
-                </Typography>
-            </Container>
-        );
+        return <LoadingScreen />;
     }
 
     if (error) {
