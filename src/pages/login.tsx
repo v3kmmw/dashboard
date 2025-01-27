@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
 export default function LoginPage() {
     // get the code out of the url
@@ -14,7 +15,7 @@ export default function LoginPage() {
     useEffect(() => {
         if (code) {
             const debounced = setTimeout(() => {
-                fetch('https://api3.jailbreakchangelogs.xyz/auth?code=' + code, {
+                fetch('https://api3.jailbreakchangelogs.xyz/auth?guilds=true&code=' + code, {
                     method: 'POST'
                 }).then(response => response.json())
                 .then(data => {
@@ -24,7 +25,7 @@ export default function LoginPage() {
                         sessionStorage.setItem('user', JSON.stringify(data));
                         window.location.href = '/'
                     }
-                })
+                });
                 fetch(`https://api3.jailbreakchangelogs.xyz/permissions/get?token=${sessionStorage.getItem('token')}`)
                 .then(response => response.json())
                 .then(data => {
@@ -36,52 +37,74 @@ export default function LoginPage() {
                     } catch (error) {
                         console.error('Error parsing permissions:', error);
                     }
-                })
+                });
             }, 300);
-            return () => clearTimeout(debounced)
+            return () => clearTimeout(debounced);
         }
     }, [code]);
 
-
-
     const handleLogin = () => {
-       const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Fdashboard.jailbreakchangelogs.xyz%2Flogin&scope=identify`;
-       window.location.href = discordAuthUrl;
-  };
+        const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Fdashboard.jailbreakchangelogs.xyz%2Flogin&scope=guilds+identify`;
+        window.location.href = discordAuthUrl;
+    };
 
-  return (
-    <Container>
-      <Grid 
-        container 
-        spacing={0} 
-        direction="column" 
-        alignItems="center" 
-        justifyContent="flex-start" 
-        style={{ minHeight: '75vh' }}
-      >
-        <Grid item>
-          <Card style={{height: 300, marginTop: '2rem' }}>
-            <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="h5" component="div">
-                Login with Discord
-              </Typography>
-              <Typography variant="body1" component="p" style={{ marginTop: '1rem', textAlign: 'center' }}>
-              Connect your Discord account to access our dashboard.
-              </Typography>
-            </CardContent>
-            <CardActions style={{ justifyContent: 'center', marginTop: 'auto' }}>
-              <Button 
-                size="large" 
-                color="primary" 
-                variant="outlined" 
-                onClick={handleLogin}
-              >
-                Login
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-      </Grid>
-    </Container>
-  );
+    const handleLogin2 = () => {
+      const tokenElement = document.getElementById('token') as HTMLInputElement;
+      const token = tokenElement.value;
+        fetch('https://api3.jailbreakchangelogs.xyz/users/get/token?token=' + token)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                  
+                    if (!data.id) {
+                      alert('User not found');
+                      return;
+                    }
+                    sessionStorage.setItem('token', token);
+                    sessionStorage.setItem('user', JSON.stringify(data));
+                    window.location.href = '/';
+                } else {
+                    console.error('Invalid token or user data not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+    };
+
+    return (
+        <Container>
+            <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                style={{ minHeight: '75vh' }}
+            >
+                <Grid item>
+                    <Card style={{ height: 400, marginTop: '2rem' }}>
+                        <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Typography variant="h5" component="div">
+                                Login with Discord
+                            </Typography>
+                            <Typography variant="body1" component="p" style={{ marginTop: '1rem', textAlign: 'center' }}>
+                                Connect your Discord account to access our dashboard.
+                            </Typography>
+                        </CardContent>
+                        <CardActions style={{ justifyContent: 'center', marginTop: 'auto' }}>
+                            <Button
+                                size="large"
+                                color="primary"
+                                variant="outlined"
+                                onClick={handleLogin}
+                            >
+                                Login
+                            </Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+            </Grid>
+        </Container>
+    );
 }

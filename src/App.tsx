@@ -13,11 +13,25 @@ import PrizeIcon from '@mui/icons-material/EmojiEvents';
 import VehicleIcon from '@mui/icons-material/DirectionsCar';
 import CommentIcon from '@mui/icons-material/Comment';
 import PeopleIcon from '@mui/icons-material/PeopleAlt';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 
 // Ensure user details are set
-const user = JSON.parse(sessionStorage.getItem('user'));
-if (!user && window.location.pathname !== '/login') {
+const token = sessionStorage.getItem('token');
+if (!token && window.location.pathname !== '/login') {
   window.location.href = '/login';
+}
+const user = JSON.parse(sessionStorage.getItem('user'));
+if (token && !user) {
+  fetch(`https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data) {
+        sessionStorage.setItem('user', JSON.stringify(data));
+        window.location.reload();
+      }
+    });
 }
 let nav;
 if (user) {
@@ -40,10 +54,15 @@ if (user) {
     },
     {
       kind: 'header',
-      title: 'Available Database Controls',
+      title: 'Available Controls',
     },
     {
       kind: 'divider',
+    },
+    {
+      segment: 'bot',
+      title: 'Bot',
+      icon: <SmartToyIcon />,
     },
   ];
     let permissions = JSON.parse(sessionStorage.getItem('permissions'));
@@ -56,7 +75,7 @@ if (user) {
           const parsedPermissions = JSON.parse(correctedPermissionsJson);
           const availablePermissions = Object.keys(parsedPermissions).filter(permission => parsedPermissions[permission]);
           sessionStorage.setItem('permissions', JSON.stringify(availablePermissions));
-          permissions = availablePermissions
+          window.location.reload();
         } catch (error) {
           console.error('Error parsing permissions:', error);
         }
@@ -130,7 +149,7 @@ const BRANDING: any = {
   ),
   logo: (
     <img
-      src="https://cdn.jakobiis.xyz/nze0f6kli"
+      src="https://cdn.jakobiis.xyz/l6gtz1dgl"
       alt="Logo"
       style={{
         width: '40px',

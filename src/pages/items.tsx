@@ -1,22 +1,29 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import Typography from '@mui/material/Typography';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContentText from '@mui/material/DialogContentText';
-import TextField from '@mui/material/TextField';
-import TablePagination from '@mui/material/TablePagination';
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
+  TextField,
+  TablePagination,
+  IconButton,
+  Collapse,
+  Grid
+} from '@mui/material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
+
 // Loading Bar Component
 const LoadingBar = ({ mountKey }) => (
   <Box
@@ -76,14 +83,226 @@ const LoadingScreen = () => {
       gap: 2,
     }}>
       <Typography variant="h6" color="text.secondary">
-        Loading seasons...
+        Loading items...
       </Typography>
       <LoadingBar mountKey={mountKey} />
     </Box>
   );
 };
 
-export default function SeasonsPage() {
+const formatDateUTC = (timestamp) => {
+    const date = new Date(timestamp * 1000);
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    // Get month name
+    const month = months[date.getUTCMonth()];
+    
+    // Get day with ordinal suffix
+    const day = date.getUTCDate();
+    const ordinalSuffix = (day) => {
+        if (day > 3 && day < 21) return 'th';
+        switch (day % 10) {
+            case 1: return 'st';
+            case 2: return 'nd';
+            case 3: return 'rd';
+            default: return 'th';
+        }
+    };
+
+    // Format hours for 12-hour clock
+    let hours = date.getUTCHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Convert 0 to 12
+    
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    
+    return `${month} ${day}${ordinalSuffix(day)}, ${hours}:${minutes} ${ampm}`;
+};
+
+const ExpandableRow = ({ row, onEdit, onDelete }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <TableRow>
+        <TableCell>
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+        <TableCell>{row.id} | {row.name}</TableCell>
+        <TableCell>{row.type}</TableCell>
+        <TableCell>{row.cash_value} | {row.duped_value}</TableCell>
+        <TableCell>{row.demand}</TableCell>
+        <TableCell>{row.notes}</TableCell>
+        <TableCell>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => onEdit(row)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => onDelete(row)}
+            >
+              Delete
+            </Button>
+          </Box>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+            <Grid container spacing={2}>
+    <Grid 
+        item 
+        xs={6} 
+        sx={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center',    // Centers horizontally
+            justifyContent: 'center' // Centers vertically
+        }}
+    >
+        <Typography 
+            variant="h6" 
+            gutterBottom 
+            component="div"
+            sx={{ textAlign: 'center', marginBottom: 2 }}
+        >
+            Image
+        </Typography>
+        <img 
+            width="400px" 
+            src= {`https://testing.jailbreakchangelogs.xyz/assets/images/items/${row.type.toLowerCase()}s/${row.name}.webp`}
+            alt="Torpedo"
+        />
+    </Grid>
+    <Grid 
+    item 
+    xs={6}
+    sx={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center',    
+        justifyContent: 'center' 
+    }}
+>
+    <Typography 
+        variant="h6" 
+        gutterBottom 
+        marginBottom={2}
+        component="div"
+        sx={{ textAlign: 'center' }}
+    >
+        Duped Owners
+    </Typography>
+    <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
+        {row.duped_owners && row.duped_owners.split(',').slice(0, 8).map((owner, index) => (
+             <Grid item key={index}>
+                <Paper 
+                    elevation={3} 
+                    sx={{ 
+                        padding: '8px 16px',
+                        backgroundColor: '',
+                        textAlign: 'center'
+                    }}
+                >
+                    {owner.trim()}
+                </Paper>
+            </Grid>
+        ))}
+                {row.duped_owners && row.duped_owners.split(',').length > 8 && (
+            <Grid item>
+                <Paper 
+                    elevation={3} 
+                    sx={{ 
+                        padding: '8px 16px',
+                        textAlign: 'center',
+                        '&:hover': {
+                            cursor: 'pointer'
+                        },
+                        transition: 'background-color 0.3s'
+                    }}
+                >
+                    <Typography variant="body2" color="text.secondary">
+                        ...{row.duped_owners.split(',').length - 8} more
+                    </Typography>
+                </Paper>
+            </Grid>
+        )}
+    </Grid>
+</Grid>
+<Grid 
+        item 
+        xs={6} 
+        sx={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center',    // Centers horizontally
+            justifyContent: 'center' // Centers vertically
+        }}
+    >
+        <Typography 
+            variant="h6" 
+            gutterBottom 
+            component="div"
+            sx={{ textAlign: 'center', marginBottom: 2 }}
+        >
+            Description
+        </Typography>
+        <Typography>{row.description}</Typography>
+    </Grid>
+    <Grid 
+        item 
+        xs={6} 
+        sx={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center',    // Centers horizontally
+            justifyContent: 'center' // Centers vertically
+        }}
+    >
+        <Typography 
+            variant="h6"  
+            component="div"
+            sx={{ textAlign: 'center' }}
+        >
+            Limited?
+        </Typography>
+        <Typography>
+    {Number(row.is_limited) === 1 ? "True" : "False"}
+</Typography>
+<Typography 
+            variant="h6" 
+            component="div"
+            sx={{ textAlign: 'center' }}
+        >
+            Last Updated
+        </Typography>
+        <Typography sx={{ textAlign: 'center' }}>
+    {formatDateUTC(row.last_updated)}
+</Typography>
+</Grid>
+</Grid>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+};
+
+export default function ItemsPage() {
   const token = sessionStorage.getItem('token');
   if (!token) {
     window.location.href = '/login'
@@ -106,6 +325,7 @@ export default function SeasonsPage() {
     start_date: '',
     end_date: ''
   });
+  
 
   const debouncedSetSearchTerm = useCallback(
     debounce((value) => {
@@ -123,28 +343,32 @@ export default function SeasonsPage() {
 
   // Filter changelogs based on the debounced search term
   const filteredChangelogs = useMemo(() => {
-    return seasons.filter((season) =>
-      season.season.toString().includes(debouncedSearchTerm)  // Filter without debounce
-    );
-  }, [seasons, debouncedSearchTerm]);  // Recalculate only when changelogs or searchTerm change
-
+    return seasons.filter((season) => {
+        if (!season || !season.name) return false;
+        
+        const searchTerm = debouncedSearchTerm.toLowerCase();
+        const itemName = season.name.toString().toLowerCase();
+        
+        return itemName.includes(searchTerm);
+    });
+}, [seasons, debouncedSearchTerm]);
 
   useEffect(() => {
     setIsLoading(true);
-    if (sessionStorage.getItem('seasons')) {
-      setSeasons(JSON.parse(sessionStorage.getItem('seasons')));
+    if (sessionStorage.getItem('items')) {
+      setSeasons(JSON.parse(sessionStorage.getItem('items')));
       setTimeout(() => setIsLoading(false), 500); // Simulate loading
     }
 
-    fetch('https://api3.jailbreakchangelogs.xyz/seasons/list?nocache=true')
+    fetch('https://api3.jailbreakchangelogs.xyz/items/list?nocache=true')
       .then(response => response.json())
       .then(data => {
         setSeasons(data);
-        sessionStorage.setItem('seasons', JSON.stringify(data)); // Cache data
+        sessionStorage.setItem('items', JSON.stringify(data)); // Cache data
         setTimeout(() => setIsLoading(false), 500); // Simulate loading
       })
       .catch(error => {
-        console.error('Failed to fetch changelogs:', error);
+        console.error('Failed to fetch items:', error);
         setIsLoading(false);
       });
   }, []);
@@ -256,9 +480,6 @@ export default function SeasonsPage() {
     });
 };
 
-
-
-
 const handleSaveEdit = () => {
     // Ensure all fields are filled before saving
     if (!changelogToEdit.season || !changelogToEdit.title || !changelogToEdit.description) {
@@ -312,21 +533,24 @@ const handleSaveEdit = () => {
     });
 };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-    };
 
-    const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-    };
+const handleChangePage = (event, newPage) => {
+    const maxPage = Math.ceil(filteredChangelogs.length / rowsPerPage) - 1;
+    const safePage = Math.max(0, Math.min(newPage, maxPage));
+    setPage(safePage);
+};
 
+const handleChangeRowsPerPage = (event) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+    setPage(0); // Reset to first page when changing rows per page
+};
   return (
     <Paper>
       <Box sx={{ paddingLeft: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField
           variant="outlined"
-          label="Search by season"
+          label="Search by name"
           value={searchTerm}
           onChange={handleSearchChange}
           margin="normal"
@@ -336,7 +560,7 @@ const handleSaveEdit = () => {
           color="primary"
           onClick={() => setOpenAddDialog(true)}
         >
-        Add Season
+        Add Item
         </Button>
       </Box>
       <TableContainer>
@@ -352,54 +576,35 @@ const handleSaveEdit = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Season</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Start Date</TableCell>
-              <TableCell>End Date</TableCell>
+              <TableCell />
+              <TableCell>ID | Name</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell width={200}>Cash | Duped</TableCell>
+              <TableCell>Demand</TableCell>
+              <TableCell>Notes</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-  {filteredChangelogs.length === 0 ? (
-    <TableRow>
-      <TableCell colSpan={6}>
-        <Typography variant="h6" align="center">
-          This season doesnt exist.
-        </Typography>
-      </TableCell>
-    </TableRow>
-  ) : (
-    filteredChangelogs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((log, index) => (
-        <TableRow key={index}>
-        <TableCell>{log.season}</TableCell>
-        <TableCell>{log.title}</TableCell>
-        <TableCell>{log.description}</TableCell>
-        <TableCell>{log.start_date}</TableCell>
-        <TableCell>{log.end_date}</TableCell>
-        <TableCell>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleEdit(log)}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleDeleteConfirmation(log)}
-            >
-              Delete
-            </Button>
-          </Box>
-        </TableCell>
-      </TableRow>
-    ))
-  )}
-</TableBody>
-
+            {filteredChangelogs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <Typography variant="h6" align="center">
+                    This item doesn't exist.
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+                filteredChangelogs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((log, index) => (               
+                <ExpandableRow
+                  key={index}
+                  row={log}
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteConfirmation}
+                />
+              ))
+            )}
+          </TableBody>
         </Table>
         <TablePagination
           rowsPerPageOptions={[25, 50, 100]} // Adjust options as needed
@@ -420,7 +625,7 @@ const handleSaveEdit = () => {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this season? This action cannot be undone.
+            Are you sure you want to delete this item? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

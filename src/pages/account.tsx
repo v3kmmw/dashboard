@@ -54,6 +54,7 @@ export default function AccountPage() {
           const availablePermissions = Object.keys(parsedPermissions).filter(permission => parsedPermissions[permission]);
           sessionStorage.setItem('permissions', JSON.stringify(availablePermissions));
           setPermissions(availablePermissions);
+          window.location.reload();
         } catch (error) {
           console.error('Error parsing permissions:', error);
         }

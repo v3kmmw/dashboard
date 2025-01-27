@@ -13,7 +13,7 @@ export default function NotFoundPage() {
         textAlign="center"
       >
         <img
-          src="https://cdn.jakobiis.xyz/nze0f6kli"
+          src="https://cdn.jakobiis.xyz/l6gtz1dgl"
           alt="Not Found"
           style={{
             width: '200px',

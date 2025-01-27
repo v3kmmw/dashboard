@@ -9,6 +9,8 @@ import SeasonsPage from './pages/seasons';
 import AccountPage from './pages/account';
 import LoginPage from './pages/login';
 import NotFoundPage from './pages/notfound';
+import ItemsPage from './pages/items';
+import BotSettings from './pages/botsettings';
 
 const router = createBrowserRouter([
   {
@@ -27,8 +29,16 @@ const router = createBrowserRouter([
             Component: ChangelogsPage
           },
           {
+            path: 'bot',
+            Component: BotSettings,
+          },
+          {
             path: 'seasons',
             Component: SeasonsPage,
+          },
+          {
+            path: 'items',
+            Component: ItemsPage,
           },
           {
             path: 'account',
