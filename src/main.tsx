@@ -11,7 +11,6 @@ import LoginPage from './pages/login';
 import NotFoundPage from './pages/notfound';
 import ItemsPage from './pages/items';
 import BotSettings from './pages/botsettings';
-import IssuesPage from './pages/issues';
 
 const router = createBrowserRouter([
   {
@@ -36,10 +35,6 @@ const router = createBrowserRouter([
           {
             path: 'seasons',
             Component: SeasonsPage,
-          },
-          {
-            path: 'issues',
-            Component: IssuesPage,
           },
           {
             path: 'items',

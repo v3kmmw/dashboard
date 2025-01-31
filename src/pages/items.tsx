@@ -13,14 +13,17 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  FormControlLabel,
   DialogTitle,
   DialogContentText,
   TextField,
+  Checkbox,
   TablePagination,
   IconButton,
   Collapse,
   Grid
 } from '@mui/material';
+
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
@@ -148,154 +151,95 @@ const ExpandableRow = ({ row, onEdit, onDelete }) => {
             >
               Edit
             </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => onDelete(row)}
-            >
-              Delete
-            </Button>
           </Box>
         </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-            <Grid container spacing={2}>
-    <Grid 
-        item 
-        xs={6} 
-        sx={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            alignItems: 'center',    // Centers horizontally
-            justifyContent: 'center' // Centers vertically
-        }}
-    >
-        <Typography 
-            variant="h6" 
-            gutterBottom 
-            component="div"
-            sx={{ textAlign: 'center', marginBottom: 2 }}
-        >
-            Image
-        </Typography>
-        <img 
-            width="400px" 
-            src= {`https://testing.jailbreakchangelogs.xyz/assets/images/items/${row.type.toLowerCase()}s/${row.name}.webp`}
-            alt="Torpedo"
-        />
-    </Grid>
-    <Grid 
-    item 
-    xs={6}
-    sx={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center',    
-        justifyContent: 'center' 
-    }}
->
-    <Typography 
-        variant="h6" 
-        gutterBottom 
-        marginBottom={2}
-        component="div"
-        sx={{ textAlign: 'center' }}
-    >
-        Duped Owners
-    </Typography>
-    <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-        {row.duped_owners && row.duped_owners.split(',').slice(0, 8).map((owner, index) => (
-             <Grid item key={index}>
-                <Paper 
-                    elevation={3} 
-                    sx={{ 
-                        padding: '8px 16px',
-                        backgroundColor: '',
-                        textAlign: 'center'
-                    }}
-                >
-                    {owner.trim()}
-                </Paper>
-            </Grid>
-        ))}
-                {row.duped_owners && row.duped_owners.split(',').length > 8 && (
-            <Grid item>
-                <Paper 
-                    elevation={3} 
-                    sx={{ 
+        <Collapse in={open} timeout="auto" unmountOnExit>
+    <Box margin={1}>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
+            <Typography variant="h6" gutterBottom>
+              Image
+            </Typography>
+            <img
+              width="400px"
+              src={`https://testing.jailbreakchangelogs.xyz/assets/images/items/${row.type.toLowerCase()}s/${row.name}.webp`}
+              alt="Torpedo"
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
+            <Typography variant="h6" gutterBottom>
+              Duped Owners
+            </Typography>
+            <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
+              {row.duped_owners &&
+                row.duped_owners.split(',').slice(0, 8).map((owner, index) => (
+                  <Grid item key={index}>
+                    <Paper
+                      elevation={3}
+                      sx={{
                         padding: '8px 16px',
                         textAlign: 'center',
-                        '&:hover': {
-                            cursor: 'pointer'
-                        },
-                        transition: 'background-color 0.3s'
+                      }}
+                    >
+                      {owner.trim()}
+                    </Paper>
+                  </Grid>
+                ))}
+              {row.duped_owners && row.duped_owners.split(',').length > 8 && (
+                <Grid item>
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      padding: '8px 16px',
+                      textAlign: 'center',
+                      '&:hover': {
+                        cursor: 'pointer',
+                      },
+                      transition: 'background-color 0.3s',
                     }}
-                >
+                  >
                     <Typography variant="body2" color="text.secondary">
-                        ...{row.duped_owners.split(',').length - 8} more
+                      ...{row.duped_owners.split(',').length - 8} more
                     </Typography>
-                </Paper>
+                  </Paper>
+                </Grid>
+              )}
             </Grid>
-        )}
-    </Grid>
-</Grid>
-<Grid 
-        item 
-        xs={6} 
-        sx={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            alignItems: 'center',    // Centers horizontally
-            justifyContent: 'center' // Centers vertically
-        }}
-    >
-        <Typography 
-            variant="h6" 
-            gutterBottom 
-            component="div"
-            sx={{ textAlign: 'center', marginBottom: 2 }}
-        >
-            Description
-        </Typography>
-        <Typography>{row.description}</Typography>
-    </Grid>
-    <Grid 
-        item 
-        xs={6} 
-        sx={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            alignItems: 'center',    // Centers horizontally
-            justifyContent: 'center' // Centers vertically
-        }}
-    >
-        <Typography 
-            variant="h6"  
-            component="div"
-            sx={{ textAlign: 'center' }}
-        >
-            Limited?
-        </Typography>
-        <Typography>
-    {Number(row.is_limited) === 1 ? "True" : "False"}
-</Typography>
-<Typography 
-            variant="h6" 
-            component="div"
-            sx={{ textAlign: 'center' }}
-        >
-            Last Updated
-        </Typography>
-        <Typography sx={{ textAlign: 'center' }}>
-    {formatDateUTC(row.last_updated)}
-</Typography>
-</Grid>
-</Grid>
-            </Box>
-          </Collapse>
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
+            <Typography variant="h6" gutterBottom>
+              Description
+            </Typography>
+            <Typography>{row.description}</Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
+            <Typography variant="h6">
+              Limited?
+            </Typography>
+            <Typography>
+              {Number(row.is_limited) === 1 ? 'True' : 'False'}
+            </Typography>
+            <Typography variant="h6">
+              Last Updated
+            </Typography>
+            <Typography>
+              {formatDateUTC(row.last_updated)}
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  </Collapse>
         </TableCell>
       </TableRow>
     </>
@@ -319,11 +263,19 @@ export default function ItemsPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(50); // Adjust rows per page as needed
   const [changelogToEdit, setChangelogToEdit] = useState({
-    season: '',
-    title: '',
+    id: null,
+    name: '',
+    type: '',
+    cash_value: '',
+    duped_value: '',
+    price: '',
+    is_limited: false,
+    duped_owners: '',
+    notes: '',
+    demand: '',
     description: '',
-    start_date: '',
-    end_date: ''
+    health: '',
+    tradable: false
   });
   
 
@@ -410,50 +362,68 @@ export default function ItemsPage() {
   const handleCloseAddDialog = () => {
     setOpenAddDialog(false);
     setChangelogToEdit({
-      season: '',
-      title: '',
+      id: null,
+      name: '',
+      type: '',
+      cash_value: '',
+      duped_value: '',
+      price: '',
+      is_limited: false,
+      duped_owners: '',
+      notes: '',
+      demand: '',
       description: '',
-      start_date: '',
-      end_date: ''
+      health: '',
+      tradable: false
     }); // Reset add dialog fields
   };
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
     setChangelogToEdit({
-      season: '',
-      title: '',
+      id: null,
+      name: '',
+      type: '',
+      cash_value: '',
+      duped_value: '',
+      price: '',
+      is_limited: false,
+      duped_owners: '',
+      notes: '',
+      demand: '',
       description: '',
-      start_date: '',
-      end_date: ''
+      health: '',
+      tradable: false
     }); // Reset the changelog to edit
   };
 
   const handleSaveAdd = () => {
-    // Ensure all fields are filled before adding
-    if (!changelogToEdit.title || !changelogToEdit.description) {
-        alert("Please fill out all fields");
-        return;
-    }
 
     // Add the new changelog to the list
     const id = seasons.length + 1;
 
-    changelogToEdit.season = id.toString();
+    changelogToEdit.id = id.toString();
     console.log('Adding changelog:', changelogToEdit);
 
     setSeasons([...seasons, changelogToEdit]);
 
     const body = {
-      season: id,
-      title: changelogToEdit.title,
+      name: changelogToEdit.name,
+      type: changelogToEdit.type,
+      cash_value: changelogToEdit.cash_value,
+      duped_value: changelogToEdit.duped_value,
+      price: changelogToEdit.price,
+      is_limited: changelogToEdit.is_limited,
+      duped_owners: changelogToEdit.duped_owners || 'N/A',
+      notes: changelogToEdit.notes,
+      demand: changelogToEdit.demand,
       description: changelogToEdit.description,
-      start_date: changelogToEdit.start_date,
-      end_date: changelogToEdit.end_date
+      health: changelogToEdit.health,
+      tradable: changelogToEdit.tradable
     };
 
     // Make sure to set the correct headers for the request
-    fetch(`https://api3.jailbreakchangelogs.xyz/seasons/add?auth=${auth}`, {
+    fetch(`https://api3.jailbreakchangelogs.xyz/items/add?auth=${auth}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',  // Tell the server we're sending JSON
@@ -467,37 +437,48 @@ export default function ItemsPage() {
     .catch(error => {
       console.error('Error adding season:', error);
     });
-    sessionStorage.removeItem('seasons')
+    sessionStorage.removeItem('items')
 
     // Close the dialog and reset the form
     setOpenAddDialog(false);
     setChangelogToEdit({
-        season: '',
-        title: '',
-        description: '',
-        start_date: '',
-        end_date: ''
+      id: null,
+      name: '',
+      type: '',
+      cash_value: '',
+      duped_value: '',
+      price: '',
+      is_limited: false,
+      duped_owners: '',
+      notes: '',
+      demand: '',
+      description: '',
+      health: '',
+      tradable: false
     });
 };
 
 const handleSaveEdit = () => {
-    // Ensure all fields are filled before saving
-    if (!changelogToEdit.season || !changelogToEdit.title || !changelogToEdit.description) {
-        alert("Please fill out all fields");
-        return;
-    }
 
     // Save the changes to the changelog
     console.log('Saving changes to changelog:', changelogToEdit);
     const body = {
-      title: changelogToEdit.title,
+      name: changelogToEdit.name,
+      type: changelogToEdit.type,
+      cash_value: changelogToEdit.cash_value,
+      duped_value: changelogToEdit.duped_value,
+      price: changelogToEdit.price,
+      is_limited: changelogToEdit.is_limited,
+      duped_owners: changelogToEdit.duped_owners || 'N/A',
+      notes: changelogToEdit.notes,
+      demand: changelogToEdit.demand,
       description: changelogToEdit.description,
-      start_date: changelogToEdit.start_date,
-      end_date: changelogToEdit.end_date
+      health: changelogToEdit.health,
+      tradable: changelogToEdit.tradable,
     };
 
     // Make sure to set the correct headers for the request
-    fetch(`https://api3.jailbreakchangelogs.xyz/seasons/update?auth=${auth}&season=` + changelogToEdit.season, {
+    fetch(`https://api3.jailbreakchangelogs.xyz/items/update?id=` + changelogToEdit.id, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',  // Tell the server we're sending JSON
@@ -506,30 +487,38 @@ const handleSaveEdit = () => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Updated season:', data);
+      console.log('Updated item:', data);
     })
     .catch(error => {
-      console.error('Error updating season:', error);
+      console.error('Error updating item:', error);
     });
 
     // Update the changelogs array in the state
     const updatedChangelogs = seasons.map(log => 
-      log.season === changelogToEdit.season? changelogToEdit : log
+      log.id === changelogToEdit.id? changelogToEdit : log
     );
     setSeasons(updatedChangelogs);
 
-    sessionStorage.removeItem('seasons') // Update cache
+    sessionStorage.removeItem('items') // Update cache
 
     // Close the dialog
     setOpenEditDialog(false);
 
     // Reset form state after saving
     setChangelogToEdit({
-        season: '',
-        title: '',
-        description: '',
-        start_date: '',
-        end_date: ''
+      id: null,
+      name: '',
+      type: '',
+      cash_value: '',
+      duped_value: '',
+      price: '',
+      is_limited: false,
+      duped_owners: '',
+      notes: '',
+      demand: '',
+      description: '',
+      health: '',
+      tradable: false
     });
 };
 
@@ -646,37 +635,103 @@ const handleChangeRowsPerPage = (event) => {
           }
         }}
       >
-        <DialogTitle>Add Season</DialogTitle>
+        <DialogTitle>Add Item</DialogTitle>
         <DialogContent>
           <TextField
-            label="Title"
-            value={changelogToEdit.title}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, title: e.target.value })}
+            label="Name"
+            value={changelogToEdit.name}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, name: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Type"
+            value={changelogToEdit.type}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, type: e.target.value })}
+            fullWidth
+            margin="normal"
+            multiline
+          />
+          <TextField
+            label="Cash Value"
+            value={changelogToEdit.cash_value}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, cash_value: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Duped Value"
+            value={changelogToEdit.duped_value}
+            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, duped_value: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Price"
+            value={changelogToEdit.price}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, price: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={changelogToEdit.is_limited}
+                onChange={(e) => setChangelogToEdit({...changelogToEdit, is_limited: e.target.checked })}
+                color="primary"
+              />
+            }
+            label="Is Limited"
+          />\
+          <TextField
+            label="Duped Owners"
+            value={changelogToEdit.duped_owners}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, duped_owners: e.target.value })}
+            fullWidth
+            multiline
+            margin="normal"
+          />
+          <TextField
+            label="Notes"
+            value={changelogToEdit.notes}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, notes: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Demand"
+            value={changelogToEdit.demand}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, demand: e.target.value })}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Description"
             value={changelogToEdit.description}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, description: e.target.value })}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, description: e.target.value })}
             fullWidth
-            margin="normal"
             multiline
-          />
-          <TextField
-            label="Start Date"
-            value={changelogToEdit.start_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, start_date: e.target.value })}
-            fullWidth
             margin="normal"
           />
           <TextField
-            label="End Date"
-            value={changelogToEdit.end_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, end_date: e.target.value })}
+            label="Health"
+            value={changelogToEdit.health}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, health: e.target.value })}
             fullWidth
             margin="normal"
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={changelogToEdit.tradable}
+                onChange={(e) => setChangelogToEdit({...changelogToEdit, tradable: e.target.checked })}
+                color="primary"
+              />
+            }
+            label="Tradable"
+          />
+
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAddDialog}>Cancel</Button>
@@ -696,36 +751,100 @@ const handleChangeRowsPerPage = (event) => {
           }
         }}
       >
-        <DialogTitle>Edit Season</DialogTitle>
-        <DialogContent>3
+        <DialogTitle>Edit Item</DialogTitle>
+        <DialogContent>
           <TextField
-            label="Title"
-            value={changelogToEdit.title}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, title: e.target.value })}
+            label="Name"
+            value={changelogToEdit.name}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, name: e.target.value })}
             fullWidth
             margin="normal"
           />
           <TextField
-            label="Sections"
-            value={changelogToEdit.description}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, description: e.target.value })}
+            label="Type"
+            value={changelogToEdit.type}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, type: e.target.value })}
             fullWidth
             margin="normal"
             multiline
           />
           <TextField
-            label="Start Date"
-            value={changelogToEdit.start_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, start_date: e.target.value })}
+            label="Cash Value"
+            value={changelogToEdit.cash_value}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, cash_value: e.target.value })}
             fullWidth
             margin="normal"
           />
           <TextField
-            label="End Date"
-            value={changelogToEdit.end_date}
-            onChange={(e) => setChangelogToEdit({ ...changelogToEdit, end_date: e.target.value })}
+            label="Duped Value"
+            value={changelogToEdit.duped_value}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, duped_value: e.target.value })}
             fullWidth
             margin="normal"
+          />
+          <TextField
+            label="Price"
+            value={changelogToEdit.price}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, price: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={changelogToEdit.is_limited}
+                onChange={(e) => setChangelogToEdit({...changelogToEdit, is_limited: e.target.checked })}
+                color="primary"
+              />
+            }
+            label="Is Limited"
+          />
+          <TextField
+            label="Duped Owners"
+            value={changelogToEdit.duped_owners}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, duped_owners: e.target.value })}
+            fullWidth
+            multiline
+            margin="normal"
+          />
+          <TextField
+            label="Notes"
+            value={changelogToEdit.notes}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, notes: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Demand"
+            value={changelogToEdit.demand}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, demand: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Description"
+            value={changelogToEdit.description}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, description: e.target.value })}
+            fullWidth
+            multiline
+            margin="normal"
+          />
+          <TextField
+            label="Health"
+            value={changelogToEdit.health}
+            onChange={(e) => setChangelogToEdit({...changelogToEdit, health: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={changelogToEdit.tradable}
+                onChange={(e) => setChangelogToEdit({...changelogToEdit, tradable: e.target.checked })}
+                color="primary"
+              />
+            }
+            label="Tradable"
           />
         </DialogContent>
         <DialogActions>

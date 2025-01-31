@@ -96,13 +96,6 @@ if (user) {
         icon: <CalenderIcon />,
       });
     }
-    if (permissions.includes('issues')) {
-      nav.push({
-        segment: 'issues',
-        title: 'Issues',
-        icon: <BugReportIcon />,
-      });
-    }
     if (permissions.includes('rewards')) {
       nav.push({
         segment: 'rewards',
