@@ -15,7 +15,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 import PeopleIcon from '@mui/icons-material/PeopleAlt';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import SettingsIcon from '@mui/icons-material/Settings';
-
+import BugReportIcon from '@mui/icons-material/BugReport';
 
 // Ensure user details are set
 const token = sessionStorage.getItem('token');
@@ -94,6 +94,13 @@ if (user) {
         segment: 'seasons',
         title: 'Seasons',
         icon: <CalenderIcon />,
+      });
+    }
+    if (permissions.includes('issues')) {
+      nav.push({
+        segment: 'issues',
+        title: 'Issues',
+        icon: <BugReportIcon />,
       });
     }
     if (permissions.includes('rewards')) {
