@@ -59,11 +59,6 @@ if (user) {
     {
       kind: 'divider',
     },
-    {
-      segment: 'bot',
-      title: 'Bot',
-      icon: <SmartToyIcon />,
-    },
   ];
     let permissions = JSON.parse(sessionStorage.getItem('permissions'));
     if (!permissions) {
