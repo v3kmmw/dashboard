@@ -128,8 +128,23 @@ export default function OAuthSignInPage() {
     }
   }, []);
 
+  React.useEffect(() => {
+    const disableScroll = () => {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    };
+  
+    const enableScroll = () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  
+    disableScroll();
+  }, []);
+  
+
   const BRANDING = {
-    logo: <img src="https://cdn.jakobiis.xyz/l6gtz1dgl" alt="LOGO" style={{ height: 256 }} />,
+    logo: <img src="https://cdn.jakobiis.xyz/8aur0h3zo" alt="LOGO" style={{ height: 256 }} />,
     title: 'Changelogs',
   };
 
@@ -148,7 +163,9 @@ export default function OAuthSignInPage() {
 
   return (
     <AppProvider branding={BRANDING} theme={theme}>
-      <SignInPage signIn={signIn} providers={providers} />
+      <div style={{ marginTop: '-100px', position: 'fixed', alignSelf: 'center' }}> {/* Adjust the value as needed */}
+        <SignInPage signIn={signIn} providers={providers} />
+      </div>
     </AppProvider>
   );
 }
