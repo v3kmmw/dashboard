@@ -6,6 +6,7 @@ export default {
   output: {
     filename: 'bundle.js',
     path: path.resolve('dist'),
+    publicPath: '/',  // Make sure to use '/' for relative paths in the HTML file
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

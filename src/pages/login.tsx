@@ -14,8 +14,9 @@ export default function LoginPage() {
     const code = new URLSearchParams(window.location.search).get("code");
     useEffect(() => {
         if (code) {
+            window.history.pushState({}, null, "/login");
             const debounced = setTimeout(() => {
-                fetch('https://api3.jailbreakchangelogs.xyz/auth?guilds=true&code=' + code, {
+                fetch('https://api3.jailbreakchangelogs.xyz/auth?code=' + code, {
                     method: 'POST'
                 }).then(response => response.json())
                 .then(data => {
@@ -23,19 +24,31 @@ export default function LoginPage() {
                         const token = data.token;
                         sessionStorage.setItem('token', token);
                         sessionStorage.setItem('user', JSON.stringify(data));
+                        sessionStorage.removeItem('permissions')
+                        let permissionsString = data.permissions;
+
+                        // Fix single quotes and Python `True`/`False`
+                        permissionsString = permissionsString
+                            .replace(/'/g, '"') // Replace single quotes with double quotes
+                            .replace(/\bTrue\b/g, 'true') // Fix True → true
+                            .replace(/\bFalse\b/g, 'false'); // Fix False → false
+                        
+                        let permissionsObject;
+                        
+                        try {
+                            permissionsObject = JSON.parse(permissionsString); // Now it's valid JSON
+                        } catch (error) {
+                            console.error("JSON Parse Error:", error, "Fixed Data:", permissionsString);
+                            permissionsObject = {}; // Fallback
+                        }
+                        
+                        console.log("Parsed permissions:", permissionsObject);
+                        
+                        const availablePermissions = Object.keys(permissionsObject).filter(key => permissionsObject[key]);
+                        sessionStorage.setItem("permissions", JSON.stringify(availablePermissions));
+                        
+                        
                         window.location.href = '/'
-                    }
-                });
-                fetch(`https://api3.jailbreakchangelogs.xyz/permissions/get?token=${sessionStorage.getItem('token')}`)
-                .then(response => response.json())
-                .then(data => {
-                    try {
-                        const correctedPermissionsJson = data.permissions.replace(/'/g, '"').replace(/False/g, 'false').replace(/True/g, 'true');
-                        const parsedPermissions = JSON.parse(correctedPermissionsJson);
-                        const availablePermissions = Object.keys(parsedPermissions).filter(permission => parsedPermissions[permission]);
-                        sessionStorage.setItem('permissions', JSON.stringify(availablePermissions));
-                    } catch (error) {
-                        console.error('Error parsing permissions:', error);
                     }
                 });
             }, 300);
@@ -44,9 +57,9 @@ export default function LoginPage() {
     }, [code]);
 
     const handleLogin = () => {
-        const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Fdashboard.jailbreakchangelogs.xyz%2Flogin&scope=guilds+identify`;
-        const discordAuthUrl2 = "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin&scope=identify+guilds"
-        window.location.href = discordAuthUrl;
+        const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=https%3A%2F%2Fdashboard.jailbreakchangelogs.xyz%2Flogin&scope=guilds+identify&prompt=none`;
+        const discordAuthUrl2 = "https://discord.com/oauth2/authorize?client_id=1281308669299920907&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin&scope=identify+guilds&prompt=none"
+        window.location.href = discordAuthUrl2;
     };
 
     const handleLogin2 = () => {

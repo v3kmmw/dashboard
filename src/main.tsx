@@ -12,6 +12,8 @@ import NotFoundPage from './pages/notfound';
 import ItemsPage from './pages/items';
 import BotSettings from './pages/botsettings';
 import RewardsPage from './pages/rewards';
+import OAuthSignInPage from './pages/signin';
+
 
 const router = createBrowserRouter([
   {
@@ -35,10 +37,14 @@ const router = createBrowserRouter([
           },
           {
             path: 'seasons',
+            Component: SeasonsPage
+          },
+          {
+            path: 'seasons/seasons',
             Component: SeasonsPage,
           },
           {
-            path: 'rewards',
+            path: 'seasons/rewards',
             Component: RewardsPage,
           },
           {
@@ -46,13 +52,25 @@ const router = createBrowserRouter([
             Component: ItemsPage,
           },
           {
+            path: 'items/items',
+            Component: ItemsPage,
+          },
+          {
+            path: 'items/dupereports',
+            Component: NotFoundPage,
+          },
+
+          {
             path: 'account',
             Component: AccountPage,
           },
           {
-            path: 'login',
+            path: 'login2',
             Component: LoginPage,
-            
+          },
+          {
+            path: 'login',
+            Component: OAuthSignInPage,
           },
           {
             path: '*',
@@ -63,6 +81,7 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

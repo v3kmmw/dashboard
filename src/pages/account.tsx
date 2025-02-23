@@ -30,7 +30,7 @@ export default function AccountPage() {
       .then((data) => {
         try {
           // Replace single quotes with double quotes and False with false
-          const correctedPermissionsJson = data.permissions
+          const correctedPermissionsJson = data
             .replace(/'/g, '"')
             .replace(/False/g, "false")
             .replace(/True/g, "true");
@@ -61,7 +61,7 @@ export default function AccountPage() {
       .then((response) => response.json())
       .then((data) => {
         try {
-          const correctedPermissionsJson = data.permissions
+          const correctedPermissionsJson = data
             .replace(/'/g, '"')
             .replace(/False/g, "false")
             .replace(/True/g, "true");

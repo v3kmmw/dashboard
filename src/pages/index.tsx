@@ -9,11 +9,6 @@ export default function DashboardPage() {
   const [seasonCount, setSeasonCount] = React.useState(0);
 
   useEffect(() => {
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
-
     const fetchData = async () => {
       try {
         const usersResponse = await fetch(`https://api3.jailbreakchangelogs.xyz/users/list`);

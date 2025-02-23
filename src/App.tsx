@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Outlet } from 'react-router';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import type { Navigation } from '@toolpad/core/AppProvider';
-
 // Import icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeIcon from '@mui/icons-material/Home';
@@ -16,12 +15,11 @@ import PeopleIcon from '@mui/icons-material/PeopleAlt';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import SettingsIcon from '@mui/icons-material/Settings';
 import BugReportIcon from '@mui/icons-material/BugReport';
-
+import TaxiAlertIcon from '@mui/icons-material/TaxiAlert';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import DnsIcon from '@mui/icons-material/Dns';
 // Ensure user details are set
 const token = sessionStorage.getItem('token');
-if (!token && window.location.pathname !== '/login') {
-  window.location.href = '/login';
-}
 const user = JSON.parse(sessionStorage.getItem('user'));
 if (token && !user) {
   fetch(`https://api3.jailbreakchangelogs.xyz/users/get/token?token=${token}`)
@@ -29,7 +27,6 @@ if (token && !user) {
     .then(data => {
       if (data) {
         sessionStorage.setItem('user', JSON.stringify(data));
-        window.location.reload();
       }
     });
 }
@@ -85,24 +82,58 @@ if (user) {
       });
     }
     if (permissions.includes('seasons')) {
+      let children = [];
+    
+      children.push({
+        segment: 'seasons', // Modified segment name
+        title: 'Seasons',
+        icon: <CalenderIcon />,
+        type: 'child', // Added type property
+      });
+    
+      if (permissions.includes('rewards')) {
+        children.push({
+          segment: 'rewards',
+          title: 'Rewards',
+          icon: <PrizeIcon />,
+          type: 'child', // Added type property
+        });
+      }
+    
       nav.push({
         segment: 'seasons',
         title: 'Seasons',
         icon: <CalenderIcon />,
-      });
-    }
-    if (permissions.includes('rewards')) {
-      nav.push({
-        segment: 'rewards',
-        title: 'Rewards',
-        icon: <PrizeIcon />,
+        children: children,
+        type: 'parent', // Added type property
       });
     }
     if (permissions.includes('items')) {
+      let children = [];
+
+      children.push({
+        segment: 'items',
+        title: 'Items',
+        icon: <VehicleIcon />,
+      });
+      children.push({
+        segment: 'dupereports',
+        title: 'Dupe Reports',
+        icon: <TaxiAlertIcon />,
+      });
       nav.push({
         segment: 'items',
         title: 'Items',
         icon: <VehicleIcon />,
+        children: children,
+        type: 'parent', // Added type property
+      });
+    }
+    if (permissions.includes('servers')) {
+      nav.push({
+        segment:'servers',
+        title: 'Servers',
+        icon: <DnsIcon />,
       });
     }
     if (permissions.includes('comments')) {
@@ -110,6 +141,13 @@ if (user) {
         segment: 'comments',
         title: 'Comments',
         icon: <CommentIcon />,
+      });
+    }
+    if (permissions.includes('campaigns')) {
+      nav.push({
+        segment: 'campaigns',
+        title: 'Campaigns',
+        icon: <CampaignIcon />,
       });
     }
     if (permissions.includes('users')) {
